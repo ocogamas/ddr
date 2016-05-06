@@ -18,7 +18,7 @@ public class SystemLogView : MonoBehaviour
 	{
 		this.textFieldRect = this.textField.GetComponent<RectTransform> ();
 		
-		AddText ("起動しました");
+		AddText ("アプリを起動しました");
 	}
 
 	private void Start()
