@@ -20,7 +20,7 @@ public class NetworkManager : MonoBehaviour
 
     public string Request(string url, string title)
     {
-        addSystemLog("通信開始：" + title );
+        addSystemLog("通信開始：[" + title + "]");
         WebRequest request = HttpWebRequest.Create (url);
         request.Method = "GET";
 
@@ -39,7 +39,7 @@ public class NetworkManager : MonoBehaviour
 
         if (response != null)
         {
-            addSystemLog("通信成功：" + title);
+            addSystemLog("通信成功：[" + title + "]");
 
             Stream stream = response.GetResponseStream ();
             StreamReader streamReader = new StreamReader (stream, Encoding.GetEncoding ("UTF-8"));

@@ -9,6 +9,7 @@ public class Debug
     }
     public static void Log_yellow(object message) { PrintLog ("#ffff00", message);}
     public static void Log_lime(object message)   { PrintLog ("#00ff00", message);}
+    public static void Log_blue(object message)   { PrintLog ("#0000ff", message);}
 
 
 }
