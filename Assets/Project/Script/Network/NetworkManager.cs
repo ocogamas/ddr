@@ -3,11 +3,14 @@ using System.Net;
 using System.Text;
 using System.IO;
 using System.Collections;
+using System;
 
 public class NetworkManager : MonoBehaviour 
 {
 	[SerializeField] private SystemLogView systemLogView;
 
+    public const string SPREAD_SHEET_URL_BEFORE = "http://spreadsheets.google.com/feeds/list/1Ch0f9mdYj6KjT4DVOmXBCgqr5W8tDfjgr9rEKTeUZwI/";
+    public const string SPREAD_SHEET_URL_AFTER  = "/public/values?alt=json";
 
 	private void Awake()
 	{
@@ -15,12 +18,17 @@ public class NetworkManager : MonoBehaviour
 
 	private void Start()
 	{
-		this.systemLogView.AddText ("通信マネージャ起動");                      
 	}
+
+    public string GetURLWithKey(string key)
+    {
+        return SPREAD_SHEET_URL_BEFORE + key + SPREAD_SHEET_URL_AFTER;
+    }
 
     public string Request(string url, string title)
     {
         addSystemLog("通信開始：[" + title + "]");
+
         WebRequest request = HttpWebRequest.Create (url);
         request.Method = "GET";
 
@@ -29,10 +37,10 @@ public class NetworkManager : MonoBehaviour
         {
             response = request.GetResponse();
         }
-        catch
+        catch(Exception e)
         {
             response = null;
-            addSystemLog("通信エラー");
+            addSystemLog("通信エラー：[" + title + "] 正常に通信できませんでした");
         }
 
         string text = "";

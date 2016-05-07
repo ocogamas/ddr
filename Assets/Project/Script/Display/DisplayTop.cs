@@ -30,7 +30,7 @@ public class DisplayTop : DisplayBase
     // 更新確認の通信処理
     private IEnumerator checkUpdate()
     {
-        string url = "https://spreadsheets.google.com/feeds/list/1Ch0f9mdYj6KjT4DVOmXBCgqr5W8tDfjgr9rEKTeUZwI/od6/public/values?alt=json";
+        string url    = this.networkManager.GetURLWithKey ("od6");
         string result = this.networkManager.Request (url, "更新情報取得");
 
         ResponseObjectUpdateCheck resultObject = JsonFx.Json.JsonReader.Deserialize<ResponseObjectUpdateCheck> (result);
