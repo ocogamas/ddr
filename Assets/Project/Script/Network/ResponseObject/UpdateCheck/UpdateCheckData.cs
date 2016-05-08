@@ -6,7 +6,6 @@ public class UpdateCheckData
 
     public string id;
     public string title;
-    public string url;
     public string version;
 
 }

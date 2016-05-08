@@ -30,22 +30,13 @@ public class ResponseObjectUpdateCheck
 
         foreach (Dictionary<string, object> dic in this.entry)
         {
-            Dictionary<string, object> idDic = (Dictionary<string, object>)dic ["gsx$id"];
-            string id = (string)idDic ["$t"];
-
-            Dictionary<string, object> titleDic = (Dictionary<string, object>)dic ["gsx$title"];
-            string title = (string)titleDic ["$t"];
-
-            Dictionary<string, object> urlDic = (Dictionary<string, object>)dic ["gsx$url"];
-            string url = (string)urlDic ["$t"];
-
-            Dictionary<string, object> versionDic = (Dictionary<string, object>)dic ["gsx$version"];
-            string version = (string)versionDic ["$t"];
+            string id      = ResponseObjectManager.GetStringFromDictionary (dic, "id");
+            string title   = ResponseObjectManager.GetStringFromDictionary (dic, "title");
+            string version = ResponseObjectManager.GetStringFromDictionary (dic, "version");
 
             UpdateCheckData data = new UpdateCheckData ();
             data.id      = id;
             data.title   = title;
-            data.url     = url;
             data.version = version;
             list.Add (data);
 
