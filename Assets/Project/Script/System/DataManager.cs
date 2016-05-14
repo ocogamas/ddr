@@ -4,7 +4,8 @@ using System.Collections;
 
 public class DataManager 
 {
-    public static string UPDATE_INFO = "ui"; // 更新情報
+    public static string UPDATE_INFO          = "ui";   // 更新情報
+    public static string MUSIC_LIKE_DATA_LIST = "mldl"; // 楽曲投票データリスト
     
     public static void Save<T>(string fileName, T target)
     {
@@ -24,6 +25,7 @@ public class DataManager
             return default (T);
         }
         string json = File.ReadAllText (path);
+
         T result = JsonFx.Json.JsonReader.Deserialize<T> (json);
         return result;
     }

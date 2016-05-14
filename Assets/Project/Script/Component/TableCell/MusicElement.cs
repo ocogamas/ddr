@@ -7,17 +7,47 @@ public class MusicElement : MonoBehaviour
     [SerializeField] Text musicTextField;
     [SerializeField] Text likeTextField;
 
+    public MusicInfoData musicInfoData;
+    public MusicLikeData musicLikeData;
+
+    public System.Action callback = null;
+
     public void OnClickUpLikeButton()
     {
-        Debug.Log_blue ("UpLike!");
+        musicLikeData.like++;
+        if (musicLikeData.like >= 999)
+        {
+            musicLikeData.like = 999;
+        }
+        SetLikePoint (musicLikeData.like);
+
+        if (callback != null)
+        {
+            callback ();
+        }
     }
     public void OnClickDownLikeButton()
     {
-        Debug.Log_blue ("DownLike!");
+        musicLikeData.like--;
+        if (musicLikeData.like <= -999)
+        {
+            musicLikeData.like = -999;
+        }
+        SetLikePoint (musicLikeData.like);
+
+        if (callback != null)
+        {
+            callback ();
+        }
     }
 
     public void SetMusicTitle(string text)
     {
         this.musicTextField.text = text;
+    }
+
+    public void SetLikePoint(int point)
+    {
+        this.likeTextField.text = point.ToString ("D");
     }
 }

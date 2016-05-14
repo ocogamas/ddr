@@ -9,6 +9,8 @@ public class DisplayTop : DisplayBase
     [SerializeField] private SystemLogView systemLogView;
     [SerializeField] private DisplayMusicList displayMusicList;
 
+    [SerializeField] private Button musicListButton;
+
 
 
     private UpdateCheckDataList updateCheckDataList; // 更新情報
@@ -18,11 +20,13 @@ public class DisplayTop : DisplayBase
 
     private void Start()
     {
+        this.musicListButton.interactable = false;
         musicInfoDataList = new List<MusicInfoData> ();
 
         StartCoroutine (checkUpdate ());
     }
-        
+     
+    #region ボタン
 	public void OnClickMusicListButton()
 	{
 		UnityEngine.Debug.Log ("OnClickMusicListButton >");
@@ -46,6 +50,7 @@ public class DisplayTop : DisplayBase
             this.systemLogView.AddText ("データ削除失敗。ファイルが見つからない。");
         }
     }
+    #endregion
 
     // 更新確認の通信処理
     private IEnumerator checkUpdate()
@@ -56,6 +61,8 @@ public class DisplayTop : DisplayBase
         resultObject.SetupEntry ();
 
         this.updateCheckDataList = resultObject.GetDataList ();
+
+        yield return null;
 
         if (this.updateCheckDataList != null)
         {
@@ -105,8 +112,21 @@ public class DisplayTop : DisplayBase
             // 保存してあるバージョンと一致していなければダウンロードする　
             if (isSkip)
             {
-                systemLogView.AddText ("更新不要。通信をskipしました [" + data.title + "]");
-                continue;
+                MusicInfoDataList dataList = DataManager.Load<MusicInfoDataList> (data.title);
+                if (dataList != null)
+                {
+                    foreach (MusicInfoData musicData in dataList.dataList)
+                    {
+                        this.musicInfoDataList.Add (musicData);
+                    }
+                    systemLogView.AddText ("更新不要。通信をskipしました [" + data.title + "]");
+                    continue;
+                }
+                else
+                {
+                    systemLogView.AddText ("データが壊れていたので通信して取得します [" + data.title + "]");
+                }
+
             }
 
             string url    = this.networkManager.GetURLWithKey (data.id);
@@ -114,18 +134,23 @@ public class DisplayTop : DisplayBase
             ResponseObjectMusicInfo musicInfo = JsonFx.Json.JsonReader.Deserialize<ResponseObjectMusicInfo> (result);
             musicInfo.SetupEntry ();
 
-            List<MusicInfoData> musicDataList = musicInfo.GetDataList ();
+            MusicInfoDataList musicDataList = musicInfo.GetDataList ();
 
-            foreach (MusicInfoData musicData in musicDataList)
+            foreach (MusicInfoData musicData in musicDataList.dataList)
             {
                 this.musicInfoDataList.Add (musicData);
             }
-            this.systemLogView.AddText ("[ " + data.title + " ] " + musicDataList.Count + "曲取得しました"); 
+            this.systemLogView.AddText ("[ " + data.title + " ] " + musicDataList.dataList.Count + "曲取得しました"); 
+
+            // 楽曲リストを保存する
+            DataManager.Save<MusicInfoDataList> (data.title, musicDataList);
         }
 
         // 更新情報を保存する
         DataManager.Save<UpdateCheckDataList> (DataManager.UPDATE_INFO, updateCheckDataList);
         this.systemLogView.AddText ("更新情報を保存しました");
+
+        this.musicListButton.interactable = true;
 
     }
 }

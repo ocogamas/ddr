@@ -3,24 +3,31 @@ using System.Collections;
 
 public class DisplayMusicList : DisplayBase 
 {
-    [SerializeField] DisplayTop displayTop;
+    [SerializeField] private DisplayTop displayTop;
 
-    [SerializeField] GameObject content;
-    [SerializeField] GameObject cellPrefab;
+    [SerializeField] private GameObject content;
+    [SerializeField] private GameObject cellPrefab;
+
+    [SerializeField] private SystemLogView systemLogView;
+
+    private MusicLikeDataList musicLikeDataList;
 
     private void Awake()
     {
-        Debug.Log_blue ("DisplayMusicList : Awake >");
     }
     private void Start()
     {
-        Debug.Log_blue ("DisplayMusicList : Start >");
-
         setupMusicData ();
     }
     private void OnEnable()
     {
         Debug.Log_blue ("DisplayMusicList : OnEnable >");
+    }
+
+    private void callbackLikeChanged()
+    {
+        Debug.Log_lime ("ほぞん！");
+        DataManager.Save (DataManager.MUSIC_LIKE_DATA_LIST, this.musicLikeDataList);
     }
         
     public void OnClickBackButton()
@@ -36,6 +43,18 @@ public class DisplayMusicList : DisplayBase
 
     private void setupMusicData()
     {
+        this.musicLikeDataList = DataManager.Load<MusicLikeDataList> (DataManager.MUSIC_LIKE_DATA_LIST);
+        if (this.musicLikeDataList == null)
+        {
+            this.systemLogView.AddText ("投票データが保存されていません");
+            this.systemLogView.AddText ("投票データを新規作成しました");
+            this.musicLikeDataList = new MusicLikeDataList ();
+        }
+        else
+        {
+            this.systemLogView.AddText ("投票データをロードしました");
+        }
+        
         StartCoroutine (setupMusicDataCoroutine ());
     }
 
@@ -53,9 +72,34 @@ public class DisplayMusicList : DisplayBase
 
             MusicElement musicElement = cellObject.GetComponent<MusicElement> ();
             musicElement.SetMusicTitle (title);
+            musicElement.musicInfoData = data;
+
+            bool isFound = false;
+            foreach (MusicLikeData likeData in this.musicLikeDataList.dataList)
+            {
+                if (data.pk == likeData.pk)
+                {
+                    isFound = true;
+                    musicElement.SetLikePoint (likeData.like);
+                    musicElement.musicLikeData = likeData;
+                }
+            }
+            if (isFound == false)
+            {
+                MusicLikeData newLikeData = new MusicLikeData ();
+                newLikeData.pk   = data.pk;
+                newLikeData.like = 0;
+                this.musicLikeDataList.dataList.Add (newLikeData);
+                musicElement.SetLikePoint (0);
+                musicElement.musicLikeData = newLikeData;
+            }
+
+            musicElement.callback = callbackLikeChanged;
 
             yield return null;
         }
 
+        // 楽曲投票データを保存
+        DataManager.Save<MusicLikeDataList> (DataManager.MUSIC_LIKE_DATA_LIST, this.musicLikeDataList);
     }
 }

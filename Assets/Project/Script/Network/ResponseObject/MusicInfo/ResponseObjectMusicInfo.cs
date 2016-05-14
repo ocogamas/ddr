@@ -24,8 +24,9 @@ public class ResponseObjectMusicInfo
     }
 
     // entry内のデータをわかりやすい形式のデータに変換して返却する
-    public List<MusicInfoData> GetDataList()
+    public MusicInfoDataList GetDataList()
     {
+        MusicInfoDataList dataList = new MusicInfoDataList ();
         List<MusicInfoData> list = new List<MusicInfoData> ();
 
         foreach (Dictionary<string, object> dic in this.entry)
@@ -62,7 +63,9 @@ public class ResponseObjectMusicInfo
 
             Debug.Log_lime ("楽曲データ抽出　musicTitle=" + musicTitle + ", spell = " + spell + ", pk = " + pk);
         }
-        return list;
+
+        dataList.dataList = list;
+        return dataList;
     }
 
   
