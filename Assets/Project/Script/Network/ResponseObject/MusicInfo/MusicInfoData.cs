@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class MusicInfoData  
+public class MusicInfoData 
 {
     public string musicTitle;
     public string spell;
@@ -18,6 +19,4 @@ public class MusicInfoData
     public string edp;
     public string cdp;
 
-
-   
 }

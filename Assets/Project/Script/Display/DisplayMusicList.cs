@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DisplayMusicList : DisplayBase 
 {
@@ -10,8 +12,15 @@ public class DisplayMusicList : DisplayBase
 
     [SerializeField] private SystemLogView systemLogView;
 
+    [SerializeField] private Text filterText;
+
+    private List<MusicElement> musicElementList = new List<MusicElement> ();
+
+    private IEnumerator coroutine=null;
+
     private MusicLikeDataList musicLikeDataList;
 
+    #region MonoBehaviour Methods
     private void Awake()
     {
     }
@@ -23,13 +32,23 @@ public class DisplayMusicList : DisplayBase
     {
         Debug.Log_blue ("DisplayMusicList : OnEnable >");
     }
+    #endregion
+
+
+
+    #region Callback Methods
 
     private void callbackLikeChanged()
     {
         Debug.Log_lime ("ほぞん！");
-        DataManager.Save (DataManager.MUSIC_LIKE_DATA_LIST, this.musicLikeDataList);
+        DataManager.Save<MusicLikeDataList> (DataManager.MUSIC_LIKE_DATA_LIST, this.musicLikeDataList);
     }
-        
+
+    #endregion
+      
+
+    #region Button Methods
+
     public void OnClickBackButton()
     {
         Debug.Log_blue ("OnClickBackButton");
@@ -39,6 +58,46 @@ public class DisplayMusicList : DisplayBase
             StartCoroutine (this.translateCoroutine);
         }
     }
+
+    public void OnClickUpFilterButton()
+    {
+        int value = int.Parse (this.filterText.text);
+        value++;
+        if (value >= 999)
+        {
+            value = 999;
+        }
+        this.filterText.text = value.ToString ();
+
+        if (coroutine != null)
+        {
+            StopCoroutine (coroutine);
+        }
+
+        coroutine = setupMusicDataCoroutine ();
+        StartCoroutine(coroutine);
+    }
+
+    public void OnClickDownFilterButton()
+    {
+        int value = int.Parse (this.filterText.text);
+        value--;
+        if (value <= -999)
+        {
+            value = -999;
+        }
+        this.filterText.text = value.ToString ();
+
+        if (coroutine != null)
+        {
+            StopCoroutine (coroutine);
+        }
+
+        coroutine = setupMusicDataCoroutine ();
+        StartCoroutine(coroutine);
+    }
+
+    #endregion
 
 
     private void setupMusicData()
@@ -54,16 +113,46 @@ public class DisplayMusicList : DisplayBase
         {
             this.systemLogView.AddText ("投票データをロードしました");
         }
-        
-        StartCoroutine (setupMusicDataCoroutine ());
+
+        if (coroutine != null)
+        {
+            StopCoroutine (coroutine);
+        }
+
+        coroutine = setupMusicDataCoroutine ();
+        StartCoroutine(coroutine);
     }
 
     private IEnumerator setupMusicDataCoroutine()
     {
+        sortMusicDataWithSpell ();
+
+        removeAllCellObject ();
+
+
         foreach (MusicInfoData data in this.displayTop.MusicInfoDataList)
         {
             string pk    = data.pk;
             string title = data.musicTitle;
+
+            // 投票データの確認
+            bool isFilterHide = false;
+            int filterValue = int.Parse (this.filterText.text);
+            foreach (MusicLikeData likeData in this.musicLikeDataList.dataList)
+            {
+                if (data.pk == likeData.pk)
+                {                    
+                    if (likeData.like < filterValue)
+                    {
+                        isFilterHide = true; // フィルタに引っかかったので表示しません
+                    }
+                }
+            }
+            if (isFilterHide)
+            {
+                continue;
+            }
+
 
             GameObject cellObject = Instantiate (cellPrefab);
             cellObject.transform.SetParent (content.transform);
@@ -96,10 +185,42 @@ public class DisplayMusicList : DisplayBase
 
             musicElement.callback = callbackLikeChanged;
 
+            this.musicElementList.Add (musicElement);
+
             yield return null;
+        }  
+        this.coroutine = null;
+    }
+
+    private void sortMusicDataWithSpell()
+    {
+        // スペルで並び替え
+        this.displayTop.MusicInfoDataList.Sort (
+            delegate(MusicInfoData a, MusicInfoData b)
+            {
+                if (a.spell == null || a.spell.Length == 0)
+                {
+                    if (b.spell == null || b.spell.Length == 0) { return 0; }
+                    else { return 1; }
+                }
+                else
+                {
+                    if (b.spell == null || b.spell.Length == 0) { return -1; }
+                    else { return string.Compare(a.spell, b.spell); }
+                }
+            }
+        );
+    }
+
+    private void removeAllCellObject()
+    {
+        int count = this.musicElementList.Count;
+      
+        for (int i=count-1; i>=0; i--)
+        {
+            DestroyImmediate (this.musicElementList[i].gameObject);
         }
 
-        // 楽曲投票データを保存
-        DataManager.Save<MusicLikeDataList> (DataManager.MUSIC_LIKE_DATA_LIST, this.musicLikeDataList);
+        this.musicElementList.Clear ();
     }
 }
