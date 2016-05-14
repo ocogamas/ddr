@@ -24,8 +24,10 @@ public class ResponseObjectUpdateCheck
     }
 
     // entry内のデータをわかりやすい形式のデータに変換して返却する
-    public List<UpdateCheckData> GetDataList()
+    public UpdateCheckDataList GetDataList()
     {
+        UpdateCheckDataList dataList = new UpdateCheckDataList ();
+
         List<UpdateCheckData> list = new List<UpdateCheckData> ();
 
         foreach (Dictionary<string, object> dic in this.entry)
@@ -42,7 +44,10 @@ public class ResponseObjectUpdateCheck
 
             Debug.Log_lime ("更新確認データ抽出　id=" + id + ", title = " + title + ", version = " + version);
         }
-        return list;
+
+        dataList.dataList = list;
+
+        return dataList;
     }
 
 }

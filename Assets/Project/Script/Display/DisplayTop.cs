@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -9,7 +10,8 @@ public class DisplayTop : DisplayBase
     [SerializeField] private DisplayMusicList displayMusicList;
 
 
-    private List<UpdateCheckData> updateCheckDataList; // 更新情報
+
+    private UpdateCheckDataList updateCheckDataList; // 更新情報
     private List<MusicInfoData> musicInfoDataList;     // 全楽曲情報
 
     public List<MusicInfoData> MusicInfoDataList { get { return this.musicInfoDataList; } }
@@ -32,6 +34,19 @@ public class DisplayTop : DisplayBase
         }
 	}
 
+    public void OnClickDeleteDataButton()
+    {
+        bool isSuccess = DataManager.Delete (DataManager.UPDATE_INFO);
+        if (isSuccess)
+        {
+            this.systemLogView.AddText ("データ削除成功");
+        }
+        else
+        {
+            this.systemLogView.AddText ("データ削除失敗。ファイルが見つからない。");
+        }
+    }
+
     // 更新確認の通信処理
     private IEnumerator checkUpdate()
     {
@@ -44,7 +59,7 @@ public class DisplayTop : DisplayBase
 
         if (this.updateCheckDataList != null)
         {
-            downloadMusicListIfNeeded ();
+            downloadMusicListIfNeeded (resultObject);
         }
         else
         {
@@ -54,21 +69,52 @@ public class DisplayTop : DisplayBase
         yield return null;
     }
 
-    private void downloadMusicListIfNeeded()
+    private void downloadMusicListIfNeeded(ResponseObjectUpdateCheck resultObject)
     {
         this.systemLogView.AddText ("必要があれば楽曲リストを取得します");
 
-        foreach (UpdateCheckData data in this.updateCheckDataList)
+        UpdateCheckDataList loadedUpdateCheckDataList = DataManager.Load<UpdateCheckDataList> (DataManager.UPDATE_INFO);
+        if (loadedUpdateCheckDataList == null)
         {
-            // TODO: data.titleのバージョン（data.version）が、
+            this.systemLogView.AddText ("更新情報は保存されていません");
+        }
+        else
+        {
+            this.systemLogView.AddText ("更新情報を読み込みました");                       
+        }
+
+
+        foreach (UpdateCheckData data in this.updateCheckDataList.dataList)
+        {
+            bool isSkip = false;
+            if (loadedUpdateCheckDataList != null)
+            {
+                foreach (UpdateCheckData loadedData in loadedUpdateCheckDataList.dataList)
+                {
+                    if (loadedData.title == data.title)
+                    {
+                        if (loadedData.version == data.version)
+                        {
+                            isSkip = true;
+                        }
+                    }
+                }
+            }
+
+            // data.titleのバージョン（data.version）が、
             // 保存してあるバージョンと一致していなければダウンロードする　
+            if (isSkip)
+            {
+                systemLogView.AddText ("更新不要。通信をskipしました [" + data.title + "]");
+                continue;
+            }
 
             string url    = this.networkManager.GetURLWithKey (data.id);
             string result = this.networkManager.Request (url, "楽曲リスト取得 [" + data.title + "]");
-            ResponseObjectMusicInfo resultObject = JsonFx.Json.JsonReader.Deserialize<ResponseObjectMusicInfo> (result);
-            resultObject.SetupEntry ();
+            ResponseObjectMusicInfo musicInfo = JsonFx.Json.JsonReader.Deserialize<ResponseObjectMusicInfo> (result);
+            musicInfo.SetupEntry ();
 
-            List<MusicInfoData> musicDataList = resultObject.GetDataList ();
+            List<MusicInfoData> musicDataList = musicInfo.GetDataList ();
 
             foreach (MusicInfoData musicData in musicDataList)
             {
@@ -76,6 +122,10 @@ public class DisplayTop : DisplayBase
             }
             this.systemLogView.AddText ("[ " + data.title + " ] " + musicDataList.Count + "曲取得しました"); 
         }
+
+        // 更新情報を保存する
+        DataManager.Save<UpdateCheckDataList> (DataManager.UPDATE_INFO, updateCheckDataList);
+        this.systemLogView.AddText ("更新情報を保存しました");
 
     }
 }
