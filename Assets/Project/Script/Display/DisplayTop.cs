@@ -12,6 +12,8 @@ public class DisplayTop : DisplayBase
     private List<UpdateCheckData> updateCheckDataList; // 更新情報
     private List<MusicInfoData> musicInfoDataList;     // 全楽曲情報
 
+    public List<MusicInfoData> MusicInfoDataList { get { return this.musicInfoDataList; } }
+
     private void Start()
     {
         musicInfoDataList = new List<MusicInfoData> ();
