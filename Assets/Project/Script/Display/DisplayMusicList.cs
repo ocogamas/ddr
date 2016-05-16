@@ -14,6 +14,10 @@ public class DisplayMusicList : DisplayBase
 
     [SerializeField] private Text filterText;
 
+    [SerializeField] private Button higherButton;
+
+    [SerializeField] private Button belowButton;
+
     private List<MusicElement> musicElementList = new List<MusicElement> ();
 
     private IEnumerator coroutine=null;
@@ -26,6 +30,9 @@ public class DisplayMusicList : DisplayBase
     }
     private void Start()
     {
+        this.higherButton.interactable = false;
+        this.belowButton.interactable = true;
+
         setupMusicData ();
     }
     private void OnEnable()
@@ -97,6 +104,34 @@ public class DisplayMusicList : DisplayBase
         StartCoroutine(coroutine);
     }
 
+    public void OnClickHigherButton()
+    {
+        this.higherButton.interactable = false;
+        this.belowButton.interactable = true;
+
+        if (coroutine != null)
+        {
+            StopCoroutine (coroutine);
+        }
+
+        coroutine = setupMusicDataCoroutine ();
+        StartCoroutine(coroutine);
+    }
+
+    public void OnClickBelowButton()
+    {
+        this.higherButton.interactable = true;
+        this.belowButton.interactable = false;
+
+        if (coroutine != null)
+        {
+            StopCoroutine (coroutine);
+        }
+
+        coroutine = setupMusicDataCoroutine ();
+        StartCoroutine(coroutine);
+    }
+
     #endregion
 
 
@@ -128,6 +163,22 @@ public class DisplayMusicList : DisplayBase
         this.systemLogView.AddText ("ソート開始");
         yield return null;
         sortMusicDataWithSpell ();
+
+        foreach (MusicInfoData data in this.displayTop.MusicInfoDataList)
+        {
+            string pk = data.pk;
+            foreach (MusicLikeData likeData in this.musicLikeDataList.dataList)
+            {
+                if (pk == likeData.pk)
+                {
+                    data.likePoint = likeData.like;
+                    break;
+                }
+            }
+        }
+
+        sortMusicDataWithLikePoint ();
+
         this.systemLogView.AddText ("ソート完了");
         yield return null;
 
@@ -150,10 +201,22 @@ public class DisplayMusicList : DisplayBase
             foreach (MusicLikeData likeData in this.musicLikeDataList.dataList)
             {
                 if (data.pk == likeData.pk)
-                {                    
-                    if (likeData.like < filterValue)
+                {     
+                    // 値以上を表示する場合
+                    if (this.higherButton.interactable == false)
                     {
-                        isFilterHide = true; // フィルタに引っかかったので表示しません
+                        if (likeData.like < filterValue)
+                        {
+                            isFilterHide = true; // フィルタに引っかかったので表示しません
+                        }
+                    }
+                    // 値以下を表示する場合
+                    else if (this.belowButton.interactable == false)
+                    {
+                        if (likeData.like > filterValue)
+                        {
+                            isFilterHide = true; // フィルタに引っかかったので表示しません
+                        }
                     }
                 }
             }
@@ -231,6 +294,26 @@ public class DisplayMusicList : DisplayBase
                     if (b.spell == null || b.spell.Length == 0) { return -1; }
                     else { return string.Compare(a.spell, b.spell); }
                 }
+            }
+        );
+    }
+
+
+    private void sortMusicDataWithLikePoint()
+    {
+        // LIKEで並び替え
+        this.displayTop.MusicInfoDataList.Sort (
+            delegate(MusicInfoData a, MusicInfoData b)
+            {
+                if (a.likePoint > b.likePoint)
+                {
+                    return 1;
+                }
+                else if (a.likePoint < b.likePoint)
+                {
+                    return -1;
+                }
+                return 0;
             }
         );
     }

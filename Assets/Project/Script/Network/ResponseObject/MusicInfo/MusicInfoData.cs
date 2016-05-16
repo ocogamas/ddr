@@ -19,4 +19,5 @@ public class MusicInfoData
     public string edp;
     public string cdp;
 
+    public int likePoint;
 }
