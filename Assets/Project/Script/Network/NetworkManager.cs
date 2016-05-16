@@ -27,7 +27,7 @@ public class NetworkManager : MonoBehaviour
 
     public string Request(string url, string title)
     {
-        addSystemLog("通信開始：[" + title + "]");
+        StartCoroutine(addSystemLog("通信開始：[" + title + "]"));
 
         WebRequest request = HttpWebRequest.Create (url);
         request.Method = "GET";
@@ -40,14 +40,14 @@ public class NetworkManager : MonoBehaviour
         catch(Exception e)
         {
             response = null;
-            addSystemLog("通信エラー：[" + title + "] 正常に通信できませんでした");
+            StartCoroutine(addSystemLog("通信エラー：[" + title + "] 正常に通信できませんでした"));
         }
 
         string text = "";
 
         if (response != null)
         {
-            addSystemLog("通信成功：[" + title + "]");
+            StartCoroutine(addSystemLog("通信成功：[" + title + "]"));
 
             Stream stream = response.GetResponseStream ();
             StreamReader streamReader = new StreamReader (stream, Encoding.GetEncoding ("UTF-8"));
@@ -61,8 +61,9 @@ public class NetworkManager : MonoBehaviour
         return text;
     }
 
-    private void addSystemLog(string text)
+    private IEnumerator addSystemLog(string text)
     {
         this.systemLogView.AddText ("<color=#33bbff>" + text + "</color>");
+        yield return null;
     }
 }

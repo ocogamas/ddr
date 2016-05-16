@@ -66,7 +66,7 @@ public class DisplayTop : DisplayBase
 
         if (this.updateCheckDataList != null)
         {
-            downloadMusicListIfNeeded (resultObject);
+            StartCoroutine(downloadMusicListIfNeeded (resultObject));
         }
         else
         {
@@ -76,9 +76,10 @@ public class DisplayTop : DisplayBase
         yield return null;
     }
 
-    private void downloadMusicListIfNeeded(ResponseObjectUpdateCheck resultObject)
+    private IEnumerator downloadMusicListIfNeeded(ResponseObjectUpdateCheck resultObject)
     {
         this.systemLogView.AddText ("必要があれば楽曲リストを取得します");
+        yield return null;
 
         UpdateCheckDataList loadedUpdateCheckDataList = DataManager.Load<UpdateCheckDataList> (DataManager.UPDATE_INFO);
         if (loadedUpdateCheckDataList == null)
@@ -90,6 +91,7 @@ public class DisplayTop : DisplayBase
             this.systemLogView.AddText ("更新情報を読み込みました");                       
         }
 
+        yield return null;
 
         foreach (UpdateCheckData data in this.updateCheckDataList.dataList)
         {
@@ -120,6 +122,7 @@ public class DisplayTop : DisplayBase
                         this.musicInfoDataList.Add (musicData);
                     }
                     systemLogView.AddText ("更新不要。通信をskipしました [" + data.title + "]");
+                    yield return null;
                     continue;
                 }
                 else
@@ -128,6 +131,8 @@ public class DisplayTop : DisplayBase
                 }
 
             }
+
+            yield return null;
 
             string url    = this.networkManager.GetURLWithKey (data.id);
             string result = this.networkManager.Request (url, "楽曲リスト取得 [" + data.title + "]");
@@ -144,6 +149,8 @@ public class DisplayTop : DisplayBase
 
             // 楽曲リストを保存する
             DataManager.Save<MusicInfoDataList> (data.title, musicDataList);
+
+            yield return null;
         }
 
         // 更新情報を保存する
@@ -152,5 +159,6 @@ public class DisplayTop : DisplayBase
 
         this.musicListButton.interactable = true;
 
+        yield return null;
     }
 }

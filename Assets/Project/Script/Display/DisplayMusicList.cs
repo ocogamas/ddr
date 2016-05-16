@@ -125,10 +125,19 @@ public class DisplayMusicList : DisplayBase
 
     private IEnumerator setupMusicDataCoroutine()
     {
+        this.systemLogView.AddText ("ソート開始");
+        yield return null;
         sortMusicDataWithSpell ();
+        this.systemLogView.AddText ("ソート完了");
+        yield return null;
 
         removeAllCellObject ();
 
+        // １フレで複数個のセルを生成するためのカウンタ
+        int createCellCounter = 0;
+
+        // 読み込み進行度を表示するためのカウンタ
+        int loadingDisplayCounter = 0;
 
         foreach (MusicInfoData data in this.displayTop.MusicInfoDataList)
         {
@@ -187,9 +196,23 @@ public class DisplayMusicList : DisplayBase
 
             this.musicElementList.Add (musicElement);
 
-            yield return null;
+            createCellCounter++;
+            if (createCellCounter % 4 == 0)
+            {
+                yield return null;
+            }
+
+            loadingDisplayCounter++;
+            if (loadingDisplayCounter % 40 == 0)
+            {
+                float percent = loadingDisplayCounter / (float)this.displayTop.MusicInfoDataList.Count;
+                this.systemLogView.AddText ("リスト構築中... " + ((int)(100 * percent)).ToString("D") + "％");
+                yield return null;
+            }
         }  
+        this.systemLogView.AddText ("リスト構築中... 100％");
         this.coroutine = null;
+        yield return null;
     }
 
     private void sortMusicDataWithSpell()
