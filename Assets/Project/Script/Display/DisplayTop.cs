@@ -38,6 +38,11 @@ public class DisplayTop : DisplayBase
         }
 	}
 
+    public void OnClickContactUsButton()
+    {
+        Application.OpenURL ("https://docs.google.com/spreadsheets/d/1Rh8Rwe5Tq_6O_g7IKmJ7gckeI5UdCx43x07UuTxwaX0/edit?usp=sharing");
+    }
+
     public void OnClickDeleteDataButton()
     {
         bool isSuccess = DataManager.Delete (DataManager.UPDATE_INFO);
