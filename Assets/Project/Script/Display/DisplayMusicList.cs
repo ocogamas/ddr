@@ -162,7 +162,6 @@ public class DisplayMusicList : DisplayBase
     {
         this.systemLogView.AddText ("ソート開始");
         yield return null;
-        sortMusicDataWithSpell ();
 
         foreach (MusicInfoData data in this.displayTop.MusicInfoDataList)
         {
@@ -176,8 +175,7 @@ public class DisplayMusicList : DisplayBase
                 }
             }
         }
-
-        sortMusicDataWithLikePoint ();
+        sortMusicData ();
 
         this.systemLogView.AddText ("ソート完了");
         yield return null;
@@ -278,29 +276,40 @@ public class DisplayMusicList : DisplayBase
         yield return null;
     }
 
-    private void sortMusicDataWithSpell()
+    private void sortMusicData()
     {
         // スペルで並び替え
         this.displayTop.MusicInfoDataList.Sort (
             delegate(MusicInfoData a, MusicInfoData b)
             {
-                if (a.spell == null || a.spell.Length == 0)
+                if (a.likePoint == b.likePoint)
                 {
-                    if (b.spell == null || b.spell.Length == 0) { return 0; }
-                    else { return 1; }
+                    if (a.spell == null || a.spell.Length == 0)
+                    {
+                        if (b.spell == null || b.spell.Length == 0) { return 0; }
+                        else { return 1; }
+                    }
+                    else
+                    {
+                        if (b.spell == null || b.spell.Length == 0) { return -1; }
+                        else { return string.Compare(a.spell, b.spell); }
+                    }
                 }
                 else
                 {
-                    if (b.spell == null || b.spell.Length == 0) { return -1; }
-                    else { return string.Compare(a.spell, b.spell); }
+                    if (a.likePoint > b.likePoint)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return -1;
+                    }
                 }
             }
         );
-    }
 
-
-    private void sortMusicDataWithLikePoint()
-    {
+        /*
         // LIKEで並び替え
         this.displayTop.MusicInfoDataList.Sort (
             delegate(MusicInfoData a, MusicInfoData b)
@@ -316,7 +325,11 @@ public class DisplayMusicList : DisplayBase
                 return 0;
             }
         );
+        */
+
     }
+
+
 
     private void removeAllCellObject()
     {

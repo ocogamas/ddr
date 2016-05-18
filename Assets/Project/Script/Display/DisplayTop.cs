@@ -38,10 +38,43 @@ public class DisplayTop : DisplayBase
         }
 	}
 
+    public void OnClickMusicListHelpButton()
+    {
+        addHelpText ("");
+        addHelpText ("〜〜〜　おしまい　〜〜〜");
+        addHelpText ("");
+        addHelpText ("そんな使い方を想定した機能です");
+        addHelpText ("ちょっと好きな楽曲をたまには思い出したり");
+        addHelpText ("嫌いな楽曲を記憶から消したり、");
+        addHelpText ("");
+        addHelpText ("ポイントに応じて表示を絞り込む事ができます。");
+        addHelpText ("好きな楽曲ほど高いポイントを振りましょう。");
+        addHelpText ("楽曲にポイントを振る事ができます。");
+        addHelpText ("");
+        addHelpText ("〜〜〜　説明　〜〜〜");
+    }
+
     public void OnClickContactUsButton()
     {
         Application.OpenURL ("https://docs.google.com/spreadsheets/d/1Rh8Rwe5Tq_6O_g7IKmJ7gckeI5UdCx43x07UuTxwaX0/edit?usp=sharing");
     }
+
+    public void OnClickContactUsHelpButton()
+    {
+        addHelpText ("");
+        addHelpText ("〜〜〜　おしまい　〜〜〜");
+        addHelpText ("");
+        addHelpText ("思っています。");
+        addHelpText ("DDRをより楽しむ事ができるツールに育て上げたいと");
+        addHelpText ("少しずつアップデートを重ね、");
+        addHelpText ("");
+        addHelpText ("機能を追加実装するかもしれません。");
+        addHelpText ("もし要望等ありましたら遠慮なくご記載下さい。");
+        addHelpText ("Googleスプレッドシートにジャンプします。");
+        addHelpText ("");
+        addHelpText ("〜〜〜　説明　〜〜〜");
+    }
+
 
     public void OnClickDeleteDataButton()
     {
@@ -165,5 +198,11 @@ public class DisplayTop : DisplayBase
         this.musicListButton.interactable = true;
 
         yield return null;
+    }
+
+    private void addHelpText(string text)
+    {
+        this.systemLogView.AddText ("<color=#ffaa00>" + text + "</color>");
+
     }
 }
