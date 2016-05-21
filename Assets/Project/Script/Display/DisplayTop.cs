@@ -18,6 +18,26 @@ public class DisplayTop : DisplayBase
 
     public List<MusicInfoData> MusicInfoDataList { get { return this.musicInfoDataList; } }
 
+    private void Awake()
+    {
+        string sid = "62056d310111552c79cefe247c96075beaddd3e3ddde43418c4a5d56b04b7774";
+
+        #if UNITY_ANDROID && !UNITY_EDITOR
+        AMoAdUnityPlugin.Register (
+            sid        : sid,
+            bannerSize : AMoAdUnityPlugin.BannerSize.B320x50,
+            hAlign     : AMoAdUnityPlugin.HorizontalAlign.Center,
+            vAlign     : AMoAdUnityPlugin.VerticalAlign.Bottom,
+            adjustMode : AMoAdUnityPlugin.AdjustMode.Responsive,
+            rotateTrans: AMoAdUnityPlugin.RotateTransition.FlipFromLeft,
+            clickTrans : AMoAdUnityPlugin.ClickTransition.Jump,
+            imageName  : "b640_100.gif"
+        );
+
+        AMoAdUnityPlugin.Show(sid);
+        #endif
+    }
+
     private void Start()
     {
         this.musicListButton.interactable = false;
@@ -64,8 +84,8 @@ public class DisplayTop : DisplayBase
         addHelpText ("");
         addHelpText ("〜〜〜　おしまい　〜〜〜");
         addHelpText ("");
-        addHelpText ("思っています。");
-        addHelpText ("DDRをより楽しむ事ができるツールに育て上げたいと");
+        addHelpText ("育て上げたいと思っています。");
+        addHelpText ("DDRをより楽しむ事ができるツールに");
         addHelpText ("少しずつアップデートを重ね、");
         addHelpText ("");
         addHelpText ("機能を追加実装するかもしれません。");
