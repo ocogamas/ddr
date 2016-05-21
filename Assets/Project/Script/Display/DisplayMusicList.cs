@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -18,15 +19,20 @@ public class DisplayMusicList : DisplayBase
 
     [SerializeField] private Button belowButton;
 
+    [SerializeField] private MusicScrollRect scrollRect;
+
     private List<MusicElement> musicElementList = new List<MusicElement> ();
 
     private IEnumerator coroutine=null;
 
     private MusicLikeDataList musicLikeDataList;
 
+    private float scrollRateY;
+
     #region MonoBehaviour Methods
     private void Awake()
     {
+        this.scrollRect.onValueChanged.AddListener (onScrollValueChanged);
     }
     private void Start()
     {
@@ -34,6 +40,7 @@ public class DisplayMusicList : DisplayBase
         this.belowButton.interactable = true;
 
         setupMusicData ();
+
     }
     private void OnEnable()
     {
@@ -49,6 +56,13 @@ public class DisplayMusicList : DisplayBase
     {
         Debug.Log_lime ("ほぞん！");
         DataManager.Save<MusicLikeDataList> (DataManager.MUSIC_LIKE_DATA_LIST, this.musicLikeDataList);
+    }
+
+
+
+    private void onScrollValueChanged(Vector2 vec)
+    {
+        this.scrollRateY = 1.0f - vec.y;
     }
 
     #endregion
@@ -265,9 +279,16 @@ public class DisplayMusicList : DisplayBase
 
             loadingDisplayCounter++;
             if (loadingDisplayCounter % 40 == 0)
-            {
+            {                
                 float percent = loadingDisplayCounter / (float)this.displayTop.MusicInfoDataList.Count;
                 this.systemLogView.AddText ("リスト構築中... " + ((int)(100 * percent)).ToString("D") + "％");
+                yield return null;
+            }
+
+
+            while ( ((loadingDisplayCounter - 20) / (float)this.displayTop.MusicInfoDataList.Count) > this.scrollRateY)
+            {
+                //Debug.Log_blue ("counter = " + loadingDisplayCounter + ", " + (loadingDisplayCounter / (float)this.displayTop.MusicInfoDataList.Count) + " / " + this.scrollRateY);
                 yield return null;
             }
         }  
@@ -307,26 +328,7 @@ public class DisplayMusicList : DisplayBase
                     }
                 }
             }
-        );
-
-        /*
-        // LIKEで並び替え
-        this.displayTop.MusicInfoDataList.Sort (
-            delegate(MusicInfoData a, MusicInfoData b)
-            {
-                if (a.likePoint > b.likePoint)
-                {
-                    return 1;
-                }
-                else if (a.likePoint < b.likePoint)
-                {
-                    return -1;
-                }
-                return 0;
-            }
-        );
-        */
-
+        );            
     }
 
 
