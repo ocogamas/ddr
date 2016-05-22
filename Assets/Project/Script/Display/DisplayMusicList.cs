@@ -210,28 +210,25 @@ public class DisplayMusicList : DisplayBase
             // 投票データの確認
             bool isFilterHide = false;
             int filterValue = int.Parse (this.filterText.text);
-            foreach (MusicLikeData likeData in this.musicLikeDataList.dataList)
+
+
+            // 値以上を表示する場合
+            if (this.higherButton.interactable == false)
             {
-                if (data.pk == likeData.pk)
-                {     
-                    // 値以上を表示する場合
-                    if (this.higherButton.interactable == false)
-                    {
-                        if (likeData.like < filterValue)
-                        {
-                            isFilterHide = true; // フィルタに引っかかったので表示しません
-                        }
-                    }
-                    // 値以下を表示する場合
-                    else if (this.belowButton.interactable == false)
-                    {
-                        if (likeData.like > filterValue)
-                        {
-                            isFilterHide = true; // フィルタに引っかかったので表示しません
-                        }
-                    }
+                if (data.likePoint < filterValue)
+                {
+                    isFilterHide = true; // フィルタに引っかかったので表示しません
                 }
             }
+            // 値以下を表示する場合
+            else if (this.belowButton.interactable == false)
+            {
+                if (data.likePoint > filterValue)
+                {
+                    isFilterHide = true; // フィルタに引っかかったので表示しません
+                }
+            }
+
             if (isFilterHide)
             {
                 continue;
@@ -281,7 +278,7 @@ public class DisplayMusicList : DisplayBase
             if (loadingDisplayCounter % 40 == 0)
             {                
                 float percent = loadingDisplayCounter / (float)this.displayTop.MusicInfoDataList.Count;
-                this.systemLogView.AddText ("リスト構築中... " + ((int)(100 * percent)).ToString("D") + "％");
+                this.systemLogView.AddText ("リスト構築中... " + ((int)(100 * percent)).ToString("D") + "％   " + loadingDisplayCounter);
                 yield return null;
             }
 
@@ -292,7 +289,7 @@ public class DisplayMusicList : DisplayBase
                 yield return null;
             }
         }  
-        this.systemLogView.AddText ("リスト構築中... 100％");
+        this.systemLogView.AddText ("リスト構築中... 100％   " + loadingDisplayCounter);
         this.coroutine = null;
         yield return null;
     }

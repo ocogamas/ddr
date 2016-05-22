@@ -45,6 +45,8 @@ public class DataManager
     private static string getPath(string fileName)
     {
         string path = Application.persistentDataPath + "/" + fileName;
+
+        Debug.Log_blue ("getPath > path = " + path);
         return path;
     }
 }
