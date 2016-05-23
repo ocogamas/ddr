@@ -90,6 +90,8 @@ public class DisplayMusicList : DisplayBase
         }
         this.filterText.text = value.ToString ();
 
+        addSystemLogWithFilterButton (value.ToString ());
+
         if (coroutine != null)
         {
             StopCoroutine (coroutine);
@@ -109,6 +111,8 @@ public class DisplayMusicList : DisplayBase
         }
         this.filterText.text = value.ToString ();
 
+        addSystemLogWithFilterButton (value.ToString ());
+
         if (coroutine != null)
         {
             StopCoroutine (coroutine);
@@ -123,6 +127,8 @@ public class DisplayMusicList : DisplayBase
         this.higherButton.interactable = false;
         this.belowButton.interactable = true;
 
+        addSystemLogWithFilterButton (this.filterText.text);
+
         if (coroutine != null)
         {
             StopCoroutine (coroutine);
@@ -136,6 +142,8 @@ public class DisplayMusicList : DisplayBase
     {
         this.higherButton.interactable = true;
         this.belowButton.interactable = false;
+
+        addSystemLogWithFilterButton (this.filterText.text);
 
         if (coroutine != null)
         {
@@ -174,7 +182,7 @@ public class DisplayMusicList : DisplayBase
 
     private IEnumerator setupMusicDataCoroutine()
     {
-        this.systemLogView.AddText ("ソート開始");
+        
         yield return null;
 
         foreach (MusicInfoData data in this.displayTop.MusicInfoDataList)
@@ -191,7 +199,7 @@ public class DisplayMusicList : DisplayBase
         }
         sortMusicData ();
 
-        this.systemLogView.AddText ("ソート完了");
+
         yield return null;
 
         removeAllCellObject ();
@@ -340,5 +348,18 @@ public class DisplayMusicList : DisplayBase
         }
 
         this.musicElementList.Clear ();
+    }
+
+
+    private void addSystemLogWithFilterButton (string numStr)
+    {
+        if (this.higherButton.interactable == true)
+        {
+            this.systemLogView.AddText ("<color=#ff9933>ポイント " + numStr + " 以下を表示します</color>");
+        }
+        else
+        {
+            this.systemLogView.AddText ("<color=#ff9933>ポイント " + numStr + " 以上を表示します</color>");
+        }
     }
 }
