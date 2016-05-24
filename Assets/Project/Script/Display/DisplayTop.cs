@@ -62,10 +62,13 @@ public class DisplayTop : DisplayBase
     {
         addHelpText ("");
         addHelpText ("〜〜〜　おしまい　〜〜〜");
-        addHelpText ("");
-        addHelpText ("そんな使い方を想定した機能です");
-        addHelpText ("ちょっと好きな楽曲をたまには思い出したり");
-        addHelpText ("嫌いな楽曲を記憶から消したり、");
+        addHelpText ("10 : 最高に好きな曲");
+        addHelpText ("... 略 ...");
+        addHelpText ("3 : わりと好きな曲");
+        addHelpText ("2 : ちょっと好きな曲");
+        addHelpText ("1 : 知ってる曲");
+        addHelpText ("0 : 知らない曲");
+        addHelpText ("ポイント設定の例");
         addHelpText ("");
         addHelpText ("ポイントに応じて表示を絞り込む事ができます。");
         addHelpText ("好きな楽曲ほど高いポイントを振りましょう。");
@@ -84,9 +87,7 @@ public class DisplayTop : DisplayBase
         addHelpText ("");
         addHelpText ("〜〜〜　おしまい　〜〜〜");
         addHelpText ("");
-        addHelpText ("育て上げたいと思っています。");
-        addHelpText ("DDRをより楽しむ事ができるツールに");
-        addHelpText ("少しずつアップデートを重ね、");
+        addHelpText ("すこーしずつアプデします。");
         addHelpText ("");
         addHelpText ("機能を追加実装するかもしれません。");
         addHelpText ("もし要望等ありましたら遠慮なくご記載下さい。");
