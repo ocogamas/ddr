@@ -185,6 +185,9 @@ public class DisplayMusicList : DisplayBase
         
         yield return null;
 
+        int likePointMusicCount = 0;
+
+        // 保存データから、お気に入りポイントを割り当てる
         foreach (MusicInfoData data in this.displayTop.MusicInfoDataList)
         {
             string pk = data.pk;
@@ -196,9 +199,15 @@ public class DisplayMusicList : DisplayBase
                     break;
                 }
             }
+
+            if (data.likePoint == int.Parse (this.filterText.text))
+            {
+                likePointMusicCount++;
+            }
         }
         sortMusicData ();
 
+        this.systemLogView.AddText ("<color=cyan>ポイント " + this.filterText.text + " の曲は、" + likePointMusicCount + " 件です。</color>");
 
         yield return null;
 

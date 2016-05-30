@@ -87,10 +87,8 @@ public class DisplayTop : DisplayBase
         addHelpText ("");
         addHelpText ("〜〜〜　おしまい　〜〜〜");
         addHelpText ("");
-        addHelpText ("すこーしずつアプデします。");
+        addHelpText ("何かあればすこーしずつアプデします。");
         addHelpText ("");
-        addHelpText ("機能を追加実装するかもしれません。");
-        addHelpText ("もし要望等ありましたら遠慮なくご記載下さい。");
         addHelpText ("Googleスプレッドシートにジャンプします。");
         addHelpText ("");
         addHelpText ("〜〜〜　説明　〜〜〜");
@@ -102,7 +100,7 @@ public class DisplayTop : DisplayBase
         bool isSuccess = DataManager.Delete (DataManager.UPDATE_INFO);
         if (isSuccess)
         {
-            this.systemLogView.AddText ("データ削除成功");
+            this.systemLogView.AddText ("データ削除成功。再起動してください。");
         }
         else
         {
