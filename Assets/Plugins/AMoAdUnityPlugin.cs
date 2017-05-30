@@ -140,7 +140,7 @@ public class AMoAdUnityPlugin {
 	private static extern void amoad_load_interstitial(string sid);
 
 	[DllImport("__Internal")]
-	private static extern void amoad_is_interstitial_loaded(string sid);
+	private static extern bool amoad_is_interstitial_loaded(string sid);
 
 	#elif UNITY_ANDROID
 	private static object syncRoot = new object();
