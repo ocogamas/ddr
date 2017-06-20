@@ -80,6 +80,49 @@ public class DisplayMusicList : DisplayBase
         }
     }
 
+    public void OnClickRandomButton()
+    {
+        int value = int.Parse (this.filterText.text);
+
+        if (this.musicLikeDataList != null && this.musicLikeDataList.dataList != null)
+        {
+            List<string> pkList = new List<string> ();
+
+            foreach (MusicInfoData data in this.displayTop.MusicInfoDataList)
+            {
+                if (data.likePoint == value)
+                {
+                    pkList.Add (data.pk);
+                }
+            }
+                
+            if (pkList.Count > 0)
+            {
+                int random = Random.Range (0, pkList.Count);
+                Debug.Log_blue ("random = " + random);
+                Debug.Log_blue ("pkList.Count = " + pkList.Count);
+                string pk = pkList [random];
+
+                string result = "";
+
+                // 保存データから、お気に入りポイントを割り当てる
+                foreach (MusicInfoData data in this.displayTop.MusicInfoDataList)
+                {
+                    if (data.pk == pk)
+                    {
+                        result = data.musicTitle;
+                        break;
+                    }
+                }
+                this.systemLogView.AddText ("<color=yellow>" + value + "  ( " + (random+1) + " / " + pkList.Count + " )  " + result + "</color>"); 
+            }
+            else
+            {
+                this.systemLogView.AddText ("<color=yellow>" + value + "  NO DATA. </color>"); 
+            }
+        }
+    }
+
     public void OnClickUpFilterButton()
     {
         int value = int.Parse (this.filterText.text);
@@ -182,8 +225,11 @@ public class DisplayMusicList : DisplayBase
 
     private IEnumerator setupMusicDataCoroutine()
     {
+        for (int i = 0; i < 5; i++)
+        {
+            yield return null;
+        }
         
-        yield return null;
 
         int likePointMusicCount = 0;
 

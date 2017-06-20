@@ -8,8 +8,8 @@ public class AnimationUtil
         while (true)
         {
             Vector3 fromScale = fromTransform.localScale;
-            fromScale.x -= 0.08f;
-            fromScale.y -= 0.08f;
+            fromScale.x -= 0.1f;
+            fromScale.y -= 0.1f;
             if (fromScale.x <= 0.0f)
             {
                 fromScale.x = 0.01f;
@@ -42,8 +42,8 @@ public class AnimationUtil
         {
 
             toScale = toTransform.localScale;
-            toScale.x += 0.08f;
-            toScale.y += 0.08f;
+            toScale.x += 0.1f;
+            toScale.y += 0.1f;
             toTransform.localScale = toScale;
 
             if (toScale.x >= 0.95f)
